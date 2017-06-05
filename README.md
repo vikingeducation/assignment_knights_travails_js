@@ -72,27 +72,27 @@ Searching a graph (represented however you feel most comfortable -- Edge List, A
 function DFS(matrix) {
     
     for (let i = 0; i < matrix.length; i++) {
-        
+        for (let j = 0; j < matrix[i].length; j++) {
+            if (matrix[i][j] === 1) {
+                return [i, j];
+            }
+        }
     }
+    return null;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Searching the same graph using BFS.
 
-
+function BFS(matrix) {
+    
+    for (let i = 0; i < matrix[0].length; i++) {
+        for (let j = 0; j < matrix.length; j++) {
+            if (matrix[j][i] === 1) {
+                return [i, j];
+            }
+        }
+    }
+    return null;
+}
 
 
