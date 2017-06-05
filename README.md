@@ -70,7 +70,14 @@ bottom left of board is [0,0]
 
 top right of board is [7,7]
 
-10000000
+10001000
+00100000
+10001000
 00000000
-00000000
-00000000
+
+array of 8,8 where visited spaces will be set to 1  
+  non-visited will be undefined   
+
+function that produce all valid moves from single position
+  within the board
+  has not been visited
