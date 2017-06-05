@@ -48,11 +48,11 @@ Searching the same tree using BFS.
 function BFS(tree, value) {
     let queue = [tree.root]
     while (queue.length) {
-    let node = queue.unshift()
+    let node = queue.shift()
     if (node.value === value) {
     return node
     } else {
-        queue.concat(node.children)
+        queue = queue.concat(node.children)
     }
     return null
     }
