@@ -1,5 +1,5 @@
 class Move {
-  constructor(x, y, depth, parent, children = []) {
+  constructor(x, y, depth, parent = null, children = []) {
     this.x = x;
     this.y = y;
     this.depth = depth;
@@ -11,9 +11,6 @@ class Move {
 class MoveTree {
   constructor(start, maxDepth) {
     this.root = new Move(start[0], start[1], 0);
-    // [ [], [], [], [], [], [], [], [] ]
-    this.visited = Array(8).fill().map(() => []);
-    this.visited[start[0]][start[1]] = true;
     this.maxDepth = maxDepth;
     this.actualDepth = 0;
     this.moveCount = 0;
@@ -22,8 +19,6 @@ class MoveTree {
 
   legalMove(move) {
     return (
-      this.visited[move.x] &&
-      !this.visited[move.x][move.y] &&
       move.x <= 7 &&
       move.x >= 0 &&
       move.y <= 7 &&
@@ -49,14 +44,12 @@ class MoveTree {
       const y = start.y + yMove;
       if (this.legalMove({ x, y }) && start.depth < this.maxDepth) {
         moves.push(new Move(x, y, start.depth + 1, start));
-        this.visited[x][y] = true;
         this.moveCount++;
         if (this.actualDepth < start.depth + 1) {
           this.actualDepth = start.depth + 1;
         }
       }
     });
-    console.log(moves);
     return moves;
   }
 
@@ -80,19 +73,4 @@ class MoveTree {
   }
 }
 
-class KnightSearcher {
-  constructor(tree) {
-    this.tree = tree;
-  }
-
-  BFS(target) {
-    let queue = [this.tree.root];
-  }
-}
-
-const tree = new MoveTree([3, 3], 10000);
-
-const searcher = new KnightSearcher(tree);
-
-console.log(tree);
-tree.inspect();
+module.exports = MoveTree;
