@@ -31,34 +31,66 @@ node.value
 
 
 function DFS(tree, value) {
-    
-    function findValue(node) {
-        if (value === node.value) {
-            return node;
-        }
-        if (node.children = null) {
-            return;
-        }
-        
-        let stack = [];
-        
-        node.children.forEach((childNode) => {
-            findValue(childNode);
-        });
-        
-        
-        
+    let stack = [tree.root]
+    while (stack.length) {
+    let node = stack.pop()
+    if (node.value === value) {
+    return node
+    } else {
+    stack.concat(node.children)
     }
-    
-    return findValue(tree.root);
-    
-    
-    
+    return null
+    }
+}
+
+Searching the same tree using BFS.
+
+function BFS(tree, value) {
+    let queue = [tree.root]
+    while (queue.length) {
+    let node = queue.unshift()
+    if (node.value === value) {
+    return node
+    } else {
+        queue.concat(node.children)
+    }
+    return null
+    }
 }
 
 
-Searching the same tree using BFS.
 Searching a graph (represented however you feel most comfortable -- Edge List, Adjacency List or Adjacency Matrix) using DFS.
+
+
+[
+    [0,0,0,1],
+    [0,0,0,0],
+    [0,0,1,0],
+    [0,1,0,0]
+]
+
+function DFS(matrix) {
+    
+    for (let i = 0; i < matrix.length; i++) {
+        
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Searching the same graph using BFS.
 
 
