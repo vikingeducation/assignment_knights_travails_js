@@ -1,6 +1,3 @@
-const Queue = require("./queue");
-const Stack = require("./stack");
-
 const MOVES = [
   [-2, -1],
   [-2, 1],
@@ -12,8 +9,8 @@ const MOVES = [
   [2, -1]
 ];
 
-const BOARD_X = 8;
-const BOARD_Y = 8;
+const BOARD_X = 5;
+const BOARD_Y = 5;
 let ACCEPTABLE = [];
 
 const _validMoves = (x, y) => {
@@ -37,38 +34,26 @@ const _validMoves = (x, y) => {
   }
 };
 
-class Move {
-  constructor(x, y, depth, parent) {
+class Square {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.depth = depth;
-    this.children = [];
-    this.parent = parent;
+    this.adjacentSquares = [];
   }
 }
 
-class MoveTree {
-  constructor([x, y], maxDepth) {
-    this.maxDepth = maxDepth;
-    this.root = new Move(x, y, 0);
-    this.nodes = 1;
-
-    let nodeQueue = new Queue();
-    nodeQueue.enqueue(this.root);
-    while (nodeQueue.length && nodeQueue.peek().depth < this.maxDepth) {
-      let current = nodeQueue.dequeue();
-      for (let move of _validMoves(current.x, current.y)) {
-        const node = new Move(
-          current.x + move[0],
-          current.y + move[1],
-          current.depth + 1,
-          current
-        );
-        this.nodes++;
-        current.children.push(node);
-        nodeQueue.enqueue(node);
-      }
-    }
+class Board {
+  constructor() {
+    this.squares = [...Array(BOARD_X + 1)].map((_, x) =>
+      [...Array(BOARD_Y + 1)].map((_, y) => new Square(x, y))
+    );
+    this.square.forEach(row => {
+      row.forEach(square => {
+        square.chilren = _validMoves(square.x, square.y).map(([x, y]) => {
+          return this.squares[x][y];
+        });
+      });
+    });
   }
 
   inspect() {
@@ -81,16 +66,15 @@ class MoveTree {
 }
 
 class KnightSearcher {
-  constructor(moveTree) {
-    this.moveTree = moveTree;
-    this.start = moveTree.root;
+  constructor(board) {
+    this.squares = board.squares;
   }
 
-  dfsFor([x, y]) {
+  dfsFor([startX, startY], [endX, endY]) {
     let stack = new Stack();
-    let current = this.start;
+    let current = this.squares[startX][startY];
     do {
-      if (current.x === x && current.y === y) {
+      if (current.x === endX && current.y === endY) {
         let answer = new Stack();
         answer.push([current.x, current.y]);
         while (current.parent) {
@@ -99,7 +83,7 @@ class KnightSearcher {
         }
         return answer.stack.reverse();
       }
-      stack.concat(current.children);
+      stack.concat(current.adjacentSquares);
       current = stack.pop();
     } while (stack.length);
     return false;
@@ -159,7 +143,7 @@ const tree = new MoveTree([4, 4], 12);
 console.log(tree.inspect());
 // console.log(JSON.stringify(tree.root, null, 2));
 // tree.display();
-// console.log((Date.now() - before) / 1000);
+console.log((Date.now() - before) / 1000);
 const searcher = new KnightSearcher(tree);
 console.log(searcher.dfsFor([4, 2]));
 console.log(searcher.dfsFor([8, 8]));
