@@ -12,7 +12,8 @@ class MoveTree {
     this.maxDepth = maxDepth;
     this.moveSet = moveSet;
     this.queue = [new Move(boardPos)];
-    this.stack = [new Move(boardPos)];
+    // this.stack = [new Move(boardPos)];
+    this.vertex = new Move(boardPos);
     this.counter = 0;
     this.map = [boardPos];
   }
@@ -30,11 +31,57 @@ class MoveTree {
   }
 
   searchDFS(targetCoords) {
-    const moves = this.generateNewPositions(boardPos, this.moveSet);
-    moves.filter(move => !this.map.includes(move));
+    if (this.comparePositions(this.vertex.boardPos, targetCoords))
+      return this.vertex;
+    let positions = this.generateNewPositions(this.vertex, this.moveSet);
+
+    // filter out anything that's in map
+    positions = positions.filter(position => !this.withinMap(position));
+    if (!positions.length) {
+      this.vertex = this.vertex.parent;
+      return this.searchDFS(targetCoords);
+    }
+
+    // need to find best move to use
+    const bestPos = this.doMathAndFindBestChild(positions, targetCoords);
+    const newMove = new Move(bestPos, this.vertex.depth + 1, [], this.vertex);
+    this.vertex.children.push(newMove);
+    this.vertex = newMove;
+    return this.searchDFS(targetCoords);
   }
 
-  doMath(moves) {}
+  doMathAndFindBestChild(positions, targetCoords) {
+    // best case someone is on the target
+    const endPoint = positions.find(position =>
+      this.comparePositions(position, targetCoords)
+    );
+    if (endPoint) return endPoint;
+
+    // we try to find position that is closest to sqrt(5)
+    let bestPos = positions[0];
+    positions.forEach(position => {
+      if (
+        Math.abs(findAboluteDistance(position, targetCoords) - Math.sqrt(5)) <
+        Math.abs(findAboluteDistance(bestPos, targetCoords) - Math.sqrt(5))
+      )
+        bestPos = position;
+    });
+    return bestPos;
+  }
+
+  findAboluteDistance(pos_1, pos_2) {
+    return Math.sqrt((pos_1[0] - pos_2[0]) ** 2, (pos_1[1] - pos_2[1]) ** 2);
+  }
+
+  comparePositions(pos_1, pos_2) {
+    return pos_1[0] === pos_2[0] && pos_1[1] === pos_2[1];
+  }
+
+  withinMap(position) {
+    return !!this.map.find(currPosition =>
+      this.comparePositions(position, currPosition)
+    );
+  }
 
   searchBFS(targetCoords) {
     const targetMove = this.queue.find(
