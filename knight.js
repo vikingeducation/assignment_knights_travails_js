@@ -1,3 +1,6 @@
+const Queue = require("./queue");
+const Stack = require("./stack");
+
 const MOVES = [
   [-2, -1],
   [-2, 1],
@@ -50,9 +53,10 @@ class MoveTree {
     this.root = new Move(x, y, 0);
     this.nodes = 1;
 
-    let nodeQueue = [this.root];
-    while (nodeQueue.length && nodeQueue[0].depth < this.maxDepth) {
-      let current = nodeQueue.shift();
+    let nodeQueue = new Queue();
+    nodeQueue.enqueue(this.root);
+    while (nodeQueue.length && nodeQueue.peek().depth < this.maxDepth) {
+      let current = nodeQueue.dequeue();
       for (let move of _validMoves(current.x, current.y)) {
         const node = new Move(
           current.x + move[0],
@@ -62,7 +66,7 @@ class MoveTree {
         );
         this.nodes++;
         current.children.push(node);
-        nodeQueue.push(node);
+        nodeQueue.enqueue(node);
       }
     }
   }
@@ -100,19 +104,21 @@ class KnightSearcher {
     return false;
   }
   bfsFor([x, y]) {
-    let queue = [this.start];
-    let current = queue[0];
+    let queue = new Queue();
+    queue.enqueue(this.start);
+    let current = this.start;
     while (queue.length) {
       if (current.x === x && current.y === y) {
-        let answer = [[current.x, current.y]];
+        let answer = new Stack();
+        answer.push([current.x, current.y]);
         while (current.parent) {
-          answer.unshift([current.parent.x, current.parent.y]);
+          answer.push([current.parent.x, current.parent.y]);
           current = current.parent;
         }
         return answer;
       }
-      queue = queue.concat(current.children);
-      current = queue.shift();
+      queue.concat(current.children);
+      current = queue.dequeue();
     }
     return false;
   }
