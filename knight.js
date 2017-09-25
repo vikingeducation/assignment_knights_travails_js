@@ -35,11 +35,11 @@ const _validMoves = (x, y) => {
 };
 
 class Move {
-  constructor(x, y, depth, children = [], parent) {
+  constructor(x, y, depth, parent) {
     this.x = x;
     this.y = y;
     this.depth = depth;
-    this.children = children;
+    this.children = [];
     this.parent = parent;
   }
 }
@@ -57,7 +57,8 @@ class MoveTree {
         const node = new Move(
           current.x + move[0],
           current.y + move[1],
-          current.depth + 1
+          current.depth + 1,
+          current
         );
         this.nodes++;
         current.children.push(node);
@@ -75,9 +76,85 @@ class MoveTree {
   }
 }
 
+class KnightSearcher {
+  constructor(moveTree) {
+    this.moveTree = moveTree;
+    this.start = moveTree.root;
+  }
+
+  dfsFor([x, y]) {
+    let stack = [this.start];
+    let current = stack[0];
+    while (stack.length) {
+      if (current.x === x && current.y === y) {
+        let answer = [[current.x, current.y]];
+        while (current.parent) {
+          answer.unshift([current.parent.x, current.parent.y]);
+          current = current.parent;
+        }
+        return answer;
+      }
+      stack = stack.concat(current.children);
+      current = stack.pop();
+    }
+    return false;
+  }
+  bfsFor([x, y]) {
+    let queue = [this.start];
+    let current = queue[0];
+    while (queue.length) {
+      if (current.x === x && current.y === y) {
+        let answer = [[current.x, current.y]];
+        while (current.parent) {
+          answer.unshift([current.parent.x, current.parent.y]);
+          current = current.parent;
+        }
+        return answer;
+      }
+      queue = queue.concat(current.children);
+      current = queue.shift();
+    }
+    return false;
+  }
+  benchmark(operationCount, testcase) {
+    //dfs
+    console.log("============== Running DFS =================");
+    let start = Date.now();
+    let count = operationCount;
+    let answers = [];
+    for (var i = 0; i < count; i++) {
+      answers.push(this.dfsFor(testcase));
+    }
+    let finalTime = (Date.now() - start) / 1000;
+    console.log(`Time taken for dfs ${operationCount} times = `, finalTime);
+    console.log(`Answers = ${answers}`);
+    console.log("============== Running bfs =================");
+    start = Date.now();
+    count = operationCount;
+    for (var i = 0; i < count; i++) {
+      answers.push(this.bfsFor(testcase));
+    }
+
+    finalTime = (Date.now() - start) / 1000;
+    console.log(`Time taken for bfs  ${operationCount} times  = `, finalTime);
+    console.log(`Answers = ${answers}`);
+  }
+}
+
 const before = Date.now();
-const tree = new MoveTree([4, 4], 8);
+const tree = new MoveTree([4, 4], 7);
 console.log(tree.inspect());
 // console.log(JSON.stringify(tree.root, null, 2));
 // tree.display();
 console.log((Date.now() - before) / 1000);
+const searcher = new KnightSearcher(tree);
+console.log(searcher.dfsFor([4, 2]));
+console.log(searcher.dfsFor([8, 8]));
+console.log(searcher.bfsFor([4, 2]));
+console.log(searcher.bfsFor([8, 8]));
+searcher.benchmark(10, [4, 2]);
+searcher.benchmark(15, [8, 8]);
+// searcher.benchmark([4,2], 10)
+// searcher.benchmark([4,2], 10)
+
+/////
