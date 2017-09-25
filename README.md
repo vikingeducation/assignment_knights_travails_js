@@ -50,4 +50,15 @@ search(queue, value) {
 
 3. Search graph Depth First Search with Adjacency Matrix
 
-make a graph
+search(stack, value){
+  Check to see if value is the right one and flag it
+  use the adjacency matrix to grab a child until child has no children
+  if no valid children left, pop off stack    
+}
+
+4. Search graph bfs with adjacency matrix
+
+search(queue, value){
+  if !value flag it
+  use the adjacency matrix to get all children and push them onto the queue, pop off current vertex  
+}
