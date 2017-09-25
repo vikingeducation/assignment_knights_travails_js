@@ -24,7 +24,7 @@ class Queue {
     return this.queue[this.head + 1];
   }
   concat(arr) {
-    for (let item in arr) {
+    for (let item of arr) {
       this.enqueue(item);
     }
   }

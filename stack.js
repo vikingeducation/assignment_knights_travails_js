@@ -17,6 +17,11 @@ class Stack {
   peek() {
     return this.stack[this.length - 1];
   }
+  concat(arr) {
+    for (let item of arr) {
+      this.push(item);
+    }
+  }
 }
 
 module.exports = Stack;

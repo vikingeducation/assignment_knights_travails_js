@@ -12,8 +12,8 @@ const MOVES = [
   [2, -1]
 ];
 
-const BOARD_X = 5;
-const BOARD_Y = 5;
+const BOARD_X = 8;
+const BOARD_Y = 8;
 let ACCEPTABLE = [];
 
 const _validMoves = (x, y) => {
@@ -87,27 +87,9 @@ class KnightSearcher {
   }
 
   dfsFor([x, y]) {
-    let stack = [this.start];
-    let current = stack[0];
-    while (stack.length) {
-      if (current.x === x && current.y === y) {
-        let answer = [[current.x, current.y]];
-        while (current.parent) {
-          answer.unshift([current.parent.x, current.parent.y]);
-          current = current.parent;
-        }
-        return answer;
-      }
-      stack = stack.concat(current.children);
-      current = stack.pop();
-    }
-    return false;
-  }
-  bfsFor([x, y]) {
-    let queue = new Queue();
-    queue.enqueue(this.start);
+    let stack = new Stack();
     let current = this.start;
-    while (queue.length) {
+    do {
       if (current.x === x && current.y === y) {
         let answer = new Stack();
         answer.push([current.x, current.y]);
@@ -115,51 +97,77 @@ class KnightSearcher {
           answer.push([current.parent.x, current.parent.y]);
           current = current.parent;
         }
-        return answer;
+        return answer.stack.reverse();
       }
-      queue.concat(current.children);
-      current = queue.dequeue();
-    }
+      stack.concat(current.children);
+      current = stack.pop();
+    } while (stack.length);
     return false;
   }
-  benchmark(operationCount, testcase) {
+  bfsFor([x, y]) {
+    let queue = new Queue();
+    let current = this.start;
+    do {
+      if (current.x === x && current.y === y) {
+        let answer = new Stack();
+        answer.push([current.x, current.y]);
+        while (current.parent) {
+          answer.push([current.parent.x, current.parent.y]);
+          current = current.parent;
+        }
+        return answer.stack.reverse();
+      }
+      if (current.children && current.children.length) {
+        queue.concat(current.children);
+      }
+      current = queue.dequeue();
+    } while (queue.length);
+    return false;
+  }
+  benchmark(operationCount, testcases) {
     //dfs
     console.log("============== Running DFS =================");
     let start = Date.now();
     let count = operationCount;
     let answers = [];
-    for (var i = 0; i < count; i++) {
-      answers.push(this.dfsFor(testcase));
+    for (let i = 0; i < count; i++) {
+      for (let oneCase of testcases) {
+        answers.push([this.dfsFor(oneCase)]);
+      }
     }
     let finalTime = (Date.now() - start) / 1000;
     console.log(`Time taken for dfs ${operationCount} times = `, finalTime);
-    console.log(`Answers = ${answers}`);
+    console.log(`Answers = `, answers.length);
+
     console.log("============== Running bfs =================");
     start = Date.now();
     count = operationCount;
-    for (var i = 0; i < count; i++) {
-      answers.push(this.bfsFor(testcase));
+    answers = [];
+    for (let i = 0; i < count; i++) {
+      for (let oneCase of testcases) {
+        answers.push([this.bfsFor(oneCase)]);
+      }
     }
-
     finalTime = (Date.now() - start) / 1000;
     console.log(`Time taken for bfs  ${operationCount} times  = `, finalTime);
-    console.log(`Answers = ${answers}`);
+    console.log(`Answers = `, answers.length);
   }
 }
 
 const before = Date.now();
-const tree = new MoveTree([4, 4], 7);
+const tree = new MoveTree([4, 4], 8);
 console.log(tree.inspect());
 // console.log(JSON.stringify(tree.root, null, 2));
 // tree.display();
-console.log((Date.now() - before) / 1000);
+// console.log((Date.now() - before) / 1000);
 const searcher = new KnightSearcher(tree);
-console.log(searcher.dfsFor([4, 2]));
-console.log(searcher.dfsFor([8, 8]));
-console.log(searcher.bfsFor([4, 2]));
-console.log(searcher.bfsFor([8, 8]));
-searcher.benchmark(10, [4, 2]);
-searcher.benchmark(15, [8, 8]);
+// console.log(searcher.dfsFor([4, 2]));
+// console.log(searcher.dfsFor([8, 8]));
+// console.log(searcher.bfsFor([4, 2]));
+// console.log(searcher.dfsFor([3, 6]));
+// console.log(searcher.bfsFor([3, 6]));
+searcher.benchmark(100, [[4, 2], [6, 6], [3, 8]]);
+// searcher.benchmark(150, [[8, 8]]);
 // searcher.benchmark([4,2], 10)
 // searcher.benchmark([4,2], 10)
 
