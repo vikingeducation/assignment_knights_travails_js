@@ -33,7 +33,11 @@ class MoveTree {
   searchDFS(targetCoords) {
     if (this.comparePositions(this.vertex.boardPos, targetCoords))
       return this.vertex;
-    let positions = this.generateNewPositions(this.vertex, this.moveSet);
+    this.map.push(this.vertex.boardPos);
+    let positions = this.generateNewPositions(
+      this.vertex.boardPos,
+      this.moveSet
+    );
 
     // filter out anything that's in map
     positions = positions.filter(position => !this.withinMap(position));
@@ -51,6 +55,7 @@ class MoveTree {
   }
 
   doMathAndFindBestChild(positions, targetCoords) {
+    console.log("math");
     // best case someone is on the target
     const endPoint = positions.find(position =>
       this.comparePositions(position, targetCoords)
@@ -59,13 +64,17 @@ class MoveTree {
 
     // we try to find position that is closest to sqrt(5)
     let bestPos = positions[0];
+    console.log(bestPos);
+
     positions.forEach(position => {
       if (
-        Math.abs(findAboluteDistance(position, targetCoords) - Math.sqrt(5)) <
-        Math.abs(findAboluteDistance(bestPos, targetCoords) - Math.sqrt(5))
+        Math.abs(this.findAboluteDistance(position, targetCoords)) <
+          Math.abs(this.findAboluteDistance(bestPos, targetCoords)) &&
+        Math.abs(this.findAboluteDistance(position, targetCoords)) >= 2
       )
         bestPos = position;
     });
+    console.log(bestPos);
     return bestPos;
   }
 

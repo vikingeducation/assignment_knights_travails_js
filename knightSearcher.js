@@ -29,6 +29,6 @@ const moveSet = [
 
 const search = new KnightSearcher(new MoveTree([0, 0], 1, moveSet));
 
-// search.bfsFor([5, 2]);
+search.bfsFor([3, 0]);
 
-search.dfsFor([5, 2]);
+search.dfsFor([3, 0]);
