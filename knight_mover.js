@@ -11,9 +11,10 @@ class MoveTree {
   constructor(boardPos, maxDepth = 1) {
     this.maxDepth = maxDepth;
     this.queue = [new Move(boardPos)];
-    for (let i = 0; i < 5; i++) {
-      this.generateNewDepth();
-    }
+    this.counter = 0;
+    // for (let i = 0; i < 2; i++) {
+    //   this.generateNewDepth();
+    // }
   }
 
   generateNewDepth() {
@@ -27,16 +28,24 @@ class MoveTree {
   generateNewMoves() {
     // we aren't adding the children to the parents right now
     let possiblePositions = this.generateNewPositions(
-      this.queue[0],
+      this.queue[0].boardPos,
       knightMoves
     );
+    // console.log("possible positions", possiblePositions);
 
     possiblePositions.forEach(boardPos => {
-      this.queue.push(
-        new Move(boardPos, this.queue[0].depth + 1, [], this.queue[0])
+      let newMove = new Move(
+        boardPos,
+        this.queue[0].depth + 1,
+        [],
+        this.queue[0]
       );
+      console.log(newMove);
+      this.queue.push(newMove);
+      this.queue[0].children.push(newMove);
+      this.counter++;
     });
-    console.log("this.queue: ", this.queue);
+    // console.log("this.queue: ", this.queue);
     this.queue = this.queue.slice(1);
   }
 
@@ -52,7 +61,7 @@ class MoveTree {
 
   // nodes and depth
   inspect() {
-    console.log("nodes: ", this.queue.length);
+    console.log("nodes: ", this.counter);
     console.log("maxDepth: ", this.maxDepth);
   }
 }
@@ -65,17 +74,6 @@ const inBoard = (boardPos, boardMax) => {
     boardPos[1] <= boardMax[1]
   );
 };
-
-const knightMoves = [
-  [1, 2],
-  [2, 1],
-  [2, -1],
-  [1, -2],
-  [-1, 2],
-  [-2, -1],
-  [-1, -2],
-  [-2, 1]
-];
 
 const knightTree = new MoveTree([0, 0], 3);
 knightTree.inspect();
