@@ -8,13 +8,34 @@ class Move {
 }
 
 class MoveTree {
-  constructor(boardPos, maxDepth = 1) {
+  constructor(boardPos, maxDepth = 1, moveSet) {
     this.maxDepth = maxDepth;
+    this.moveSet = moveSet;
     this.queue = [new Move(boardPos)];
     this.counter = 0;
-    // for (let i = 0; i < 2; i++) {
-    //   this.generateNewDepth();
-    // }
+  }
+
+  printPath(vertex) {
+    const pathArray = [];
+
+    while (vertex) {
+      pathArray.push(vertex);
+      vertex = vertex.parent;
+    }
+
+    console.log(`${pathArray.length} Moves`);
+    pathArray.forEach(vertex => console.log(vertex.boardPos));
+  }
+
+  searchBFS(targetCoords) {
+    const targetMove = this.queue.find(
+      move =>
+        move.boardPos[0] === targetCoords[0] &&
+        move.boardPos[1] === targetCoords[1]
+    );
+    if (targetMove) return targetMove;
+    this.generateNewDepth();
+    return this.searchBFS(targetCoords);
   }
 
   generateNewDepth() {
@@ -29,9 +50,8 @@ class MoveTree {
     // we aren't adding the children to the parents right now
     let possiblePositions = this.generateNewPositions(
       this.queue[0].boardPos,
-      knightMoves
+      this.moveSet
     );
-    // console.log("possible positions", possiblePositions);
 
     possiblePositions.forEach(boardPos => {
       let newMove = new Move(
@@ -40,12 +60,10 @@ class MoveTree {
         [],
         this.queue[0]
       );
-      console.log(newMove);
       this.queue.push(newMove);
       this.queue[0].children.push(newMove);
       this.counter++;
     });
-    // console.log("this.queue: ", this.queue);
     this.queue = this.queue.slice(1);
   }
 
@@ -54,7 +72,7 @@ class MoveTree {
 
     moveArray.forEach(move => {
       const boardPos = [move[0] + origin[0], move[1] + origin[1]];
-      if (inBoard(boardPos, [7, 7])) possibleMoves.push(boardPos);
+      if (this.inBoard(boardPos, [7, 7])) possibleMoves.push(boardPos);
     });
     return possibleMoves;
   }
@@ -64,16 +82,18 @@ class MoveTree {
     console.log("nodes: ", this.counter);
     console.log("maxDepth: ", this.maxDepth);
   }
+
+  inBoard(boardPos, boardMax) {
+    return (
+      boardPos[0] >= 0 &&
+      boardPos[0] <= boardMax[0] &&
+      boardPos[1] >= 0 &&
+      boardPos[1] <= boardMax[1]
+    );
+  }
 }
 
-const inBoard = (boardPos, boardMax) => {
-  return (
-    boardPos[0] >= 0 &&
-    boardPos[0] <= boardMax[0] &&
-    boardPos[1] >= 0 &&
-    boardPos[1] <= boardMax[1]
-  );
-};
+module.exports = MoveTree;
 
-const knightTree = new MoveTree([0, 0], 3);
-knightTree.inspect();
+// const knightTree = new MoveTree([0, 0], 3);
+// knightTree.inspect();

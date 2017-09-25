@@ -1,12 +1,17 @@
+const MoveTree = require("./knight_mover");
+
 class KnightSearcher {
   constructor(tree) {
     this.tree = tree;
   }
 
-  bfsFor(targetCoords) {}
+  bfsFor(targetCoords) {
+    const endVertex = this.tree.searchBFS(targetCoords);
+    this.tree.printPath(endVertex);
+  }
 }
 
-const knightMoves = [
+const moveSet = [
   [1, 2],
   [2, 1],
   [2, -1],
@@ -16,3 +21,7 @@ const knightMoves = [
   [-1, -2],
   [-2, 1]
 ];
+
+const search = new KnightSearcher(new MoveTree([0, 0], 1, moveSet));
+
+search.bfsFor([5, 5]);
