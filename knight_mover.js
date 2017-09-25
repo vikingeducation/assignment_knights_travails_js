@@ -15,7 +15,7 @@ class MoveTree {
     // this.stack = [new Move(boardPos)];
     this.vertex = new Move(boardPos);
     this.counter = 0;
-    this.map = [boardPos];
+    this.map = [this.vertex.boardPos];
   }
 
   printPath(vertex) {
@@ -33,7 +33,9 @@ class MoveTree {
   searchDFS(targetCoords) {
     if (this.comparePositions(this.vertex.boardPos, targetCoords))
       return this.vertex;
+
     this.map.push(this.vertex.boardPos);
+
     let positions = this.generateNewPositions(
       this.vertex.boardPos,
       this.moveSet
@@ -55,7 +57,6 @@ class MoveTree {
   }
 
   doMathAndFindBestChild(positions, targetCoords) {
-    console.log("math");
     // best case someone is on the target
     const endPoint = positions.find(position =>
       this.comparePositions(position, targetCoords)
@@ -64,8 +65,6 @@ class MoveTree {
 
     // we try to find position that is closest to sqrt(5)
     let bestPos = positions[0];
-    console.log(bestPos);
-
     positions.forEach(position => {
       if (
         Math.abs(this.findAboluteDistance(position, targetCoords)) <
@@ -74,7 +73,7 @@ class MoveTree {
       )
         bestPos = position;
     });
-    console.log(bestPos);
+    // console.log(bestPos);
     return bestPos;
   }
 
@@ -158,7 +157,7 @@ class MoveTree {
   }
 }
 
-module.exports = MoveTree;
+module.exports = { MoveTree, Move };
 
 // const knightTree = new MoveTree([0, 0], 3);
 // knightTree.inspect();

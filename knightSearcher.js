@@ -1,4 +1,4 @@
-const MoveTree = require("./knight_mover");
+const { MoveTree, Move } = require("./knight_mover");
 
 class KnightSearcher {
   constructor(tree) {
@@ -7,12 +7,18 @@ class KnightSearcher {
 
   bfsFor(targetCoords) {
     const endVertex = this.tree.searchBFS(targetCoords);
-    this.tree.printPath(endVertex);
+    this.tree.queue = [new Move(targetCoords)];
+
+    // this.tree.printPath(endVertex);
+    // return endVertex;
   }
 
   dfsFor(targetCoords) {
+    // const maxDepth = this.bfsFor(targetCoords).depth;
     const endVertex = this.tree.searchDFS(targetCoords);
-    this.tree.printPath(endVertex);
+    this.vertex = new Move(targetCoords);
+    this.tree.map = [];
+    // this.tree.printPath(endVertex);
   }
 }
 
@@ -28,7 +34,30 @@ const moveSet = [
 ];
 
 const search = new KnightSearcher(new MoveTree([0, 0], 1, moveSet));
+const randomArray = [];
+new Array(20000)
+  .fill(0)
+  .forEach(() =>
+    randomArray.push([
+      Math.floor(Math.random() * 7),
+      Math.floor(Math.random() * 7)
+    ])
+  );
 
-search.bfsFor([3, 0]);
+let start = new Date();
+for (let i = 0; i < randomArray.length; i++) {
+  search.bfsFor(randomArray[i]);
+}
+let end = new Date();
 
-search.dfsFor([3, 0]);
+console.log("breadth first: ", (end - start) / 1000, " seconds");
+
+start = new Date();
+for (let i = 0; i < randomArray.length; i++) {
+  search.dfsFor(randomArray[i]);
+}
+end = new Date();
+
+console.log("depth first: ", (end - start) / 1000, " seconds");
+
+// search.dfsFor([3, 0]);
