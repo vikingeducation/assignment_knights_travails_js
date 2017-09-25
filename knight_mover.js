@@ -12,7 +12,9 @@ class MoveTree {
     this.maxDepth = maxDepth;
     this.moveSet = moveSet;
     this.queue = [new Move(boardPos)];
+    this.stack = [new Move(boardPos)];
     this.counter = 0;
+    this.map = [boardPos];
   }
 
   printPath(vertex) {
@@ -23,9 +25,16 @@ class MoveTree {
       vertex = vertex.parent;
     }
 
-    console.log(`${pathArray.length} Moves`);
-    pathArray.forEach(vertex => console.log(vertex.boardPos));
+    console.log(`${pathArray.length - 1} Moves`);
+    pathArray.reverse().forEach(vertex => console.log(vertex.boardPos));
   }
+
+  searchDFS(targetCoords) {
+    const moves = this.generateNewPositions(boardPos, this.moveSet);
+    moves.filter(move => !this.map.includes(move));
+  }
+
+  doMath(moves) {}
 
   searchBFS(targetCoords) {
     const targetMove = this.queue.find(

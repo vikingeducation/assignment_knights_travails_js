@@ -9,6 +9,11 @@ class KnightSearcher {
     const endVertex = this.tree.searchBFS(targetCoords);
     this.tree.printPath(endVertex);
   }
+
+  dfsFor(targetCoords) {
+    // const endVertex = this.tree.searchDFS(targetCoords);
+    // this.tree.printPath(endVertex);
+  }
 }
 
 const moveSet = [
@@ -24,4 +29,4 @@ const moveSet = [
 
 const search = new KnightSearcher(new MoveTree([0, 0], 1, moveSet));
 
-search.bfsFor([5, 5]);
+search.bfsFor([5, 2]);
