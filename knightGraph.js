@@ -72,8 +72,11 @@ class KnightSearcher {
     let current = this.squares[startX][startY];
     depthMap.set(current, 1);
     pathStack.push([current.x, current.y]);
+    let checked = 0;
     do {
+      checked++;
       if (current.x === endX && current.y === endY) {
+        console.log("DFS Steps: ", checked, "Length: ", pathStack.length);
         return pathStack.slice();
       }
 
@@ -100,13 +103,16 @@ class KnightSearcher {
     let current = this.squares[startX][startY];
     let pathMap = new Map();
     pathMap.set(current, null);
+    let checked = 0;
     do {
+      checked++;
       if (current.x === endX && current.y === endY) {
         let pathStack = new Stack();
         while (current) {
           pathStack.push([current.x, current.y]);
           current = pathMap.get(current);
         }
+        console.log("BFS Steps: ", checked, "Length: ", pathStack.length);
         return pathStack.slice().reverse();
       }
 
@@ -153,6 +159,6 @@ class KnightSearcher {
 
 const board = new Board();
 const searcher = new KnightSearcher(board);
-// console.log(searcher.dfsFor([4, 3], [4, 2]));
-// console.log(searcher.bfsFor([4, 3], [4, 2]));
-searcher.benchmark(10000, [[[4, 3], [4, 2]], [[6, 3], [1, 1]]]);
+console.log(searcher.dfsFor([4, 3], [6, 6]));
+console.log(searcher.bfsFor([4, 3], [6, 6]));
+// searcher.benchmark(10000, [[[4, 3], [6, 4]], [[6, 3], [1, 1]]]);
