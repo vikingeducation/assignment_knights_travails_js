@@ -22,6 +22,9 @@ class Stack {
       this.push(item);
     }
   }
+  slice() {
+    return this.stack.slice(0, this.length);
+  }
 }
 
 module.exports = Stack;
