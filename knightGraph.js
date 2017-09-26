@@ -122,14 +122,14 @@ class KnightSearcher {
     return false;
   }
 
-  benchmark(operationCount, testcases) {
+  benchmark(operationCount, testCases) {
     console.log("============== Running DFS =================");
     let start = Date.now();
     let count = operationCount;
     let answers = [];
     for (let i = 0; i < count; i++) {
-      for (let oneCase of testcases) {
-        answers.push([this.dfsFor(oneCase)]);
+      for (let [start, end] of testCases) {
+        answers.push(this.dfsFor(start, end));
       }
     }
     let finalTime = (Date.now() - start) / 1000;
@@ -141,8 +141,8 @@ class KnightSearcher {
     count = operationCount;
     answers = [];
     for (let i = 0; i < count; i++) {
-      for (let oneCase of testcases) {
-        answers.push([this.bfsFor(oneCase)]);
+      for (let [start, end] of testCases) {
+        answers.push(this.bfsFor(start, end));
       }
     }
     finalTime = (Date.now() - start) / 1000;
@@ -151,18 +151,8 @@ class KnightSearcher {
   }
 }
 
-const before = Date.now();
 const board = new Board();
-// console.log(JSON.stringify(board.squares, null, 2));
-// board.display();
-// console.log((Date.now() - before) / 1000);
 const searcher = new KnightSearcher(board);
-console.log(searcher.dfsFor([4, 3], [4, 2]));
-console.log(searcher.bfsFor([4, 3], [4, 2]));
-// console.log(searcher.dfsFor([8, 8]));
-// console.log(searcher.bfsFor([4, 2]));
-// console.log(searcher.bfsFor([8, 8]));
-// searcher.benchmark(10, [4, 2]);
-// searcher.benchmark(15, [8, 8]);
-
-/////
+// console.log(searcher.dfsFor([4, 3], [4, 2]));
+// console.log(searcher.bfsFor([4, 3], [4, 2]));
+searcher.benchmark(10000, [[[4, 3], [4, 2]], [[6, 3], [1, 1]]]);
