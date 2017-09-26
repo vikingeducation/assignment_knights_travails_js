@@ -1,3 +1,5 @@
+const Stack = require("./stack");
+
 const MOVES = [
   [-2, -1],
   [-2, 1],
@@ -9,8 +11,8 @@ const MOVES = [
   [2, -1]
 ];
 
-const BOARD_X = 5;
-const BOARD_Y = 5;
+const BOARD_X = 8;
+const BOARD_Y = 8;
 let ACCEPTABLE = [];
 
 const _validMoves = (x, y) => {
@@ -21,11 +23,11 @@ const _validMoves = (x, y) => {
     for (let move of MOVES) {
       if (
         x + move[0] > 0 &&
-        x + move[0] < BOARD_X + 1 &&
+        x + move[0] < BOARD_X &&
         y + move[1] > 0 &&
-        y + move[1] < BOARD_Y + 1
+        y + move[1] < BOARD_Y
       ) {
-        accepted.push(move);
+        accepted.push([x + move[0], y + move[1]]);
       }
     }
     ACCEPTABLE[x] = ACCEPTABLE[x] ? ACCEPTABLE[x] : [];
@@ -44,24 +46,23 @@ class Square {
 
 class Board {
   constructor() {
-    this.squares = [...Array(BOARD_X + 1)].map((_, x) =>
-      [...Array(BOARD_Y + 1)].map((_, y) => new Square(x, y))
+    this.squares = [...Array(BOARD_X)].map((_, x) =>
+      [...Array(BOARD_Y)].map((_, y) => new Square(x, y))
     );
-    this.square.forEach(row => {
+    this.squares.forEach(row => {
       row.forEach(square => {
-        square.chilren = _validMoves(square.x, square.y).map(([x, y]) => {
+        square.adjacentSquares = _validMoves(
+          square.x,
+          square.y
+        ).map(([x, y]) => {
           return this.squares[x][y];
         });
       });
     });
   }
 
-  inspect() {
-    return `${this.nodes} nodes at a maximum depth of ${this.maxDepth}`;
-  }
-
   display() {
-    console.log(this.root);
+    console.log(this.squares);
   }
 }
 
@@ -71,20 +72,48 @@ class KnightSearcher {
   }
 
   dfsFor([startX, startY], [endX, endY]) {
+    let depthMap = new Map();
     let stack = new Stack();
+    let pathStack = new Stack();
     let current = this.squares[startX][startY];
+    depthMap.set(current, 1);
+    pathStack.push([current.x, current.y]);
     do {
       if (current.x === endX && current.y === endY) {
-        let answer = new Stack();
-        answer.push([current.x, current.y]);
-        while (current.parent) {
-          answer.push([current.parent.x, current.parent.y]);
-          current = current.parent;
-        }
-        return answer.stack.reverse();
+        return pathStack.stack.concat([[current.x, current.y]]);
       }
-      stack.concat(current.adjacentSquares);
+
+      let currentDepth = depthMap.get(current);
+      for (let square of current.adjacentSquares) {
+        if (!depthMap.has(square)) {
+          stack.push(square);
+          depthMap.set(square, currentDepth + 1);
+        }
+      }
+
       current = stack.pop();
+      let newDepth = depthMap.get(current);
+      if (newDepth > currentDepth) {
+        pathStack.push([current.x, current.y]);
+      } else if (newDepth === currentDepth) {
+        pathStack.pop();
+        pathStack.push([current.x, current.y]);
+      } else {
+        for (let i = 0; i < currentDepth - newDepth + 1; i++) {
+          pathStack.pop();
+        }
+      }
+      console.log(
+        "X: ",
+        current.x,
+        "Y: ",
+        current.y,
+        "Depth: ",
+        newDepth,
+        "Previous: ",
+        currentDepth
+      );
+      console.log(pathStack.stack);
     } while (stack.length);
     return false;
   }
@@ -139,17 +168,16 @@ class KnightSearcher {
 }
 
 const before = Date.now();
-const tree = new MoveTree([4, 4], 12);
-console.log(tree.inspect());
-// console.log(JSON.stringify(tree.root, null, 2));
-// tree.display();
+const board = new Board();
+// console.log(JSON.stringify(board.squares, null, 2));
+// board.display();
 console.log((Date.now() - before) / 1000);
-const searcher = new KnightSearcher(tree);
-console.log(searcher.dfsFor([4, 2]));
-console.log(searcher.dfsFor([8, 8]));
-console.log(searcher.bfsFor([4, 2]));
-console.log(searcher.bfsFor([8, 8]));
-searcher.benchmark(10, [4, 2]);
-searcher.benchmark(15, [8, 8]);
+const searcher = new KnightSearcher(board);
+console.log(searcher.dfsFor([4, 4], [4, 2]));
+// console.log(searcher.dfsFor([8, 8]));
+// console.log(searcher.bfsFor([4, 2]));
+// console.log(searcher.bfsFor([8, 8]));
+// searcher.benchmark(10, [4, 2]);
+// searcher.benchmark(15, [8, 8]);
 
 /////
