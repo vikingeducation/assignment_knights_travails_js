@@ -1,4 +1,5 @@
 const Stack = require("./stack");
+const Queue = require("./queue");
 
 const MOVES = [
   [-2, -1],
@@ -13,27 +14,20 @@ const MOVES = [
 
 const BOARD_X = 8;
 const BOARD_Y = 8;
-let ACCEPTABLE = [];
 
 const _validMoves = (x, y) => {
-  if (ACCEPTABLE[x] && ACCEPTABLE[x][y]) {
-    return ACCEPTABLE[x][y];
-  } else {
-    let accepted = [];
-    for (let move of MOVES) {
-      if (
-        x + move[0] > 0 &&
-        x + move[0] < BOARD_X + 1 &&
-        y + move[1] > 0 &&
-        y + move[1] < BOARD_Y + 1
-      ) {
-        accepted.push([x + move[0], y + move[1]]);
-      }
+  let accepted = [];
+  for (let move of MOVES) {
+    if (
+      x + move[0] > 0 &&
+      x + move[0] < BOARD_X + 1 &&
+      y + move[1] > 0 &&
+      y + move[1] < BOARD_Y + 1
+    ) {
+      accepted.push([x + move[0], y + move[1]]);
     }
-    ACCEPTABLE[x] = ACCEPTABLE[x] ? ACCEPTABLE[x] : [];
-    ACCEPTABLE[x][y] = accepted;
-    return accepted;
   }
+  return accepted;
 };
 
 class Square {
@@ -85,7 +79,7 @@ class KnightSearcher {
 
       let currentDepth = depthMap.get(current);
       for (let square of current.adjacentSquares) {
-        if (!depthMap.has(square)) {
+        if (!depthMap.has(square) || depthMap.get(square) > currentDepth + 1) {
           stack.push(square);
           depthMap.set(square, currentDepth + 1);
         }
@@ -100,28 +94,35 @@ class KnightSearcher {
     } while (stack.length);
     return false;
   }
-  bfsFor([x, y]) {
+
+  bfsFor([startX, startY], [endX, endY]) {
     let queue = new Queue();
-    let current = this.start;
+    let current = this.squares[startX][startY];
+    let pathMap = new Map();
+    pathMap.set(current, null);
     do {
-      if (current.x === x && current.y === y) {
-        let answer = new Stack();
-        answer.push([current.x, current.y]);
-        while (current.parent) {
-          answer.push([current.parent.x, current.parent.y]);
-          current = current.parent;
+      if (current.x === endX && current.y === endY) {
+        let pathStack = new Stack();
+        while (current) {
+          pathStack.push([current.x, current.y]);
+          current = pathMap.get(current);
         }
-        return answer.stack.reverse();
+        return pathStack.slice().reverse();
       }
-      if (current.children && current.children.length) {
-        queue.concat(current.children);
+
+      for (let square of current.adjacentSquares) {
+        if (!pathMap.has(square)) {
+          queue.enqueue(square);
+          pathMap.set(square, current);
+        }
       }
+
       current = queue.dequeue();
     } while (queue.length);
     return false;
   }
+
   benchmark(operationCount, testcases) {
-    //dfs
     console.log("============== Running DFS =================");
     let start = Date.now();
     let count = operationCount;
@@ -154,9 +155,10 @@ const before = Date.now();
 const board = new Board();
 // console.log(JSON.stringify(board.squares, null, 2));
 // board.display();
-console.log((Date.now() - before) / 1000);
+// console.log((Date.now() - before) / 1000);
 const searcher = new KnightSearcher(board);
-console.log(searcher.dfsFor([4, 3], [4, 5]));
+console.log(searcher.dfsFor([4, 3], [4, 2]));
+console.log(searcher.bfsFor([4, 3], [4, 2]));
 // console.log(searcher.dfsFor([8, 8]));
 // console.log(searcher.bfsFor([4, 2]));
 // console.log(searcher.bfsFor([8, 8]));
