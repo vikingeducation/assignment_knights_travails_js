@@ -13,21 +13,33 @@ class Move {
 class MoveTree {
   constructor(coordinatePair, maxDepth) {
     this.start = new Move(coordinatePair[0], coordinatePair[1], maxDepth);
-    this.moveNodes = [];
+    this.moveNodes = {};
   }
 
-  potentialMoves() {
-    this.moveNodes.push(
-      this.start,
-      new Move(this.start - 2, this.start + 1),
-      new Move(this.start - 2, this.start - 1),
-      new Move(this.start + 2, this.start - 1),
-      new Move(this.start + 2, this.start + 1),
-      new Move(this.start - 1, this.start + 2),
-      new Move(this.start - 1, this.start - 2),
-      new Move(this.start + 1, this.start - 2),
-      new Move(this.start + 1, this.start + 2)
-    );
+  potentialMoves(node = this.start) {
+    let arr = [-2, -1, 1, 2];
+    arr.forEach(xpos =>{
+      arr.forEach(ypos=>{
+        let key = node.x+xpos + node.y+ypos + '';
+        if ((node.x+xpos) >= 0 && (node.x+xpos) < 8 && (node.y+ypos) >= 0 && (node.y+ypos) < 8) {
+          this.moveNodes[key] = new Move(node.x+xpos, node.y + ypos);
+        }
+      }
+    }
+
+    // let newNode = new Move(this.start.x, this.start.y, this.start.depth);
+    // if (this.start >= 0)
+    //   this.moveNodes.push(
+    //     this.start,
+    //     new Move(this.start - 2, this.start + 1),
+    //     new Move(this.start - 2, this.start - 1),
+    //     new Move(this.start + 2, this.start - 1),
+    //     new Move(this.start + 2, this.start + 1),
+    //     new Move(this.start - 1, this.start + 2),
+    //     new Move(this.start - 1, this.start - 2),
+    //     new Move(this.start + 1, this.start - 2),
+    //     new Move(this.start + 1, this.start + 2)
+    //   );
   }
 
   inspect() {
