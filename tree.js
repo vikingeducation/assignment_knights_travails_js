@@ -13,12 +13,12 @@ class Move {
 class MoveTree {
   constructor(coordinatePair, maxDepth) {
     this.start = new Move(coordinatePair[0], coordinatePair[1], maxDepth);
-    this.moveNodes = [];
+    this.moveNodes = []; //set this as an object so we can store moves
   }
 
   potentialMoves() {
     this.moveNodes.push(
-      this.start,
+      this.start, //check to see if start x position is > 0 and same for y. And not surpass 7
       new Move(this.start - 2, this.start + 1),
       new Move(this.start - 2, this.start - 1),
       new Move(this.start + 2, this.start - 1),
@@ -37,3 +37,5 @@ class MoveTree {
 }
 
 let tree = new MoveTree([3, 3], 1);
+tree.potentialMoves();
+tree.inspect();
