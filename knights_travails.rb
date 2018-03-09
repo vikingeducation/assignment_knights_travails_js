@@ -55,7 +55,7 @@ class MoveTree
 
   def generate_children(position)
     valid_moves = []
-    potential_children = [
+    potential_moves = [
       Move.new( (position.x + 2), (position.y + 1), children = [], position),
       Move.new( (position.x - 2), (position.y + 1), children = [], position),
       Move.new( (position.x + 2), (position.y - 1), children = [], position),
@@ -68,7 +68,7 @@ class MoveTree
     ]
 
     puts "\n parent [#{position.x},#{position.y}]:"
-    potential_children.each do |move|
+    potential_moves.each do |move|
       valid_range = (0..(@board_size -1)).to_a
       if valid_range.include?(move.x) && valid_range.include?(move.y)
         valid_moves << move
