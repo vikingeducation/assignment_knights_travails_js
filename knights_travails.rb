@@ -17,10 +17,9 @@ require 'pry'
 class Move
   attr_accessor :children, :parent
   attr_reader :x, :y
-  def initialize(x, y, depth, children = [], parent)
+  def initialize(x, y, children = [], parent)
     @x = x
     @y = y
-    @depth = depth
     @children = children
     @parent = parent
   end
@@ -56,15 +55,15 @@ class MoveTree
   def generate_children(position)
     valid_moves = []
     potential_children = [
-      Move.new( (position.x + 2), (position.y + 1), 0, children = [], position),
-      Move.new( (position.x - 2), (position.y + 1), 0, children = [], position),
-      Move.new( (position.x + 2), (position.y - 1), 0, children = [], position),
-      Move.new( (position.x - 2), (position.y - 1), 0, children = [], position),
+      Move.new( (position.x + 2), (position.y + 1), children = [], position),
+      Move.new( (position.x - 2), (position.y + 1), children = [], position),
+      Move.new( (position.x + 2), (position.y - 1), children = [], position),
+      Move.new( (position.x - 2), (position.y - 1), children = [], position),
 
-      Move.new( (position.x + 1), (position.y + 2), 0, children = [], position),
-      Move.new( (position.x - 1), (position.y + 2), 0, children = [], position),
-      Move.new( (position.x + 1), (position.y - 2), 0, children = [], position),
-      Move.new( (position.x - 1), (position.y - 2), 0, children = [], position)
+      Move.new( (position.x + 1), (position.y + 2), children = [], position),
+      Move.new( (position.x - 1), (position.y + 2), children = [], position),
+      Move.new( (position.x + 1), (position.y - 2), children = [], position),
+      Move.new( (position.x - 1), (position.y - 2), children = [], position)
     ]
 
     puts "\n parent [#{position.x},#{position.y}]:"
