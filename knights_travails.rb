@@ -26,6 +26,7 @@ class Move
 end
 
 class MoveTree
+  attr_reader :starting_position
   def initialize(starting_position, max_depth = 1)
     @starting_position = starting_position
     @max_depth = max_depth
@@ -80,6 +81,19 @@ class MoveTree
   end
 end #MoveTree
 
+class KnightSearcher
+  def initialize(tree)
+    @tree = tree
+  end
+
+  def possible_moves_bfs(x, y)
+    #WIP
+  end
+end #KnightSearcher
 
 
 tree = MoveTree.new([2, 2], 1)
+
+# p tree.starting_position
+searcher = KnightSearcher.new(tree)
+searcher.possible_moves_bfs(2, 2)
