@@ -76,7 +76,7 @@ class MoveTree
         puts "  child [#{move.x},#{move.y}]"
       end
     end
-    position.children = valid_moves
+    valid_moves
   end
 end #MoveTree
 
