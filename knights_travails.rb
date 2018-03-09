@@ -30,7 +30,6 @@ class MoveTree
     @starting_position = starting_position
     @max_depth = max_depth
     @board_size = 5
-    @queue = []
     @move_counter = 1
     build_tree
   end
@@ -38,12 +37,14 @@ class MoveTree
   def build_tree
     root_move = Move.new(@starting_position[0], @starting_position[1], 0, nil)
     checked_positions = []
-    @queue << root_move
+    queue = []
+    queue << root_move
 
-    while @queue != []
-      position = @queue.pop
+    while queue != []
+      position = queue.pop
       unless checked_positions.include?([position.x, position.y])
-        generate_children(position)
+        position.children = generate_children(position)
+        queue += position.children
         checked_positions << [position.x, position.y]
       end
     end
@@ -68,10 +69,9 @@ class MoveTree
 
     puts "\n parent [#{position.x},#{position.y}]:"
     potential_children.each do |move|
-      valid_range = (0..4).to_a
+      valid_range = (0..(@board_size -1)).to_a
       if valid_range.include?(move.x) && valid_range.include?(move.y)
         valid_moves << move
-        @queue << move
         @move_counter += 1
         puts "  child [#{move.x},#{move.y}]"
       end
