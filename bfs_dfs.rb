@@ -56,12 +56,12 @@ alex = Node.new('alex', 'nancy lee', [thor, loki])
 
 
 
-def find_human(search_type, head_node, search_input)
+def find_human(search_type:, head_node:, search_input:)
   puts "Searching for #{search_input}'s human..."
   queue = []
   current_node = head_node
   step_counter = 0
-  until search_input == current_node.name
+  until current_node == nil || search_input == current_node.name
     puts "checking node: #{current_node.name}"
     if current_node.posse.any?
       current_node.posse.each do |child|
@@ -72,9 +72,13 @@ def find_human(search_type, head_node, search_input)
     search_type == 'bfs' ? current_node = queue.shift : current_node = queue.pop
     step_counter += 1
   end
-  p "#{step_counter} #{search_type} Steps: #{search_input}'s human is #{current_node.human}"
+  if current_node == nil
+    puts "\n#{step_counter} #{search_type} Steps: '#{search_input}' was not found."
+  else
+    puts "\n#{step_counter} #{search_type} Steps: #{search_input}'s human is #{current_node.human}"
+  end
 end
 
-find_human('dfs', alex, 'woodlandcritter')
-find_human('bfs', alex, 'woodlandcritter')
+find_human(search_type: 'bfs', head_node: alex, search_input: 'mara')
+# find_human('bfs', alex, 'woodlandcritter')
 
